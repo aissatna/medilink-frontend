@@ -1,24 +1,23 @@
 <template>
     <nav>
         <v-app-bar>
-            <v-toolbar color="teal-lighten-3" elevation="8">
+            <v-toolbar class="app-bg" elevation="8" flat>
                 <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
                 <v-toolbar-items class="ml-5">
                     <v-img :width="180" :src="logoUrl" alt="MediLink logo"></v-img>
                 </v-toolbar-items>
                 <v-spacer></v-spacer>
-                <v-btn class="ml-3" to="/" text outlined color="teal darken-3">
-                    <span class="pr-2">Logout</span>
+                <v-btn to="/" text outlined color="teal darken-3">
+                    <span>Logout</span>
                     <v-icon icon="mdi mdi-exit-to-app"></v-icon>
                 </v-btn>
             </v-toolbar>
         </v-app-bar>
         <!-- Navigation Drawer -->
-        <v-navigation-drawer v-model="drawer" color="teal-lighten-3" app>
+        <v-navigation-drawer v-model="drawer" class="app-bg" elevation="4">
             <v-list dense>
                 <v-list-item v-for="(link, index) in userLinks" :key="index" :prepend-icon="link.icon"
-                    :title="link.title" :value="link.value" :to="link.route"
-                    :class="{ active: currentRoute === link.route }" @mouseover="hovered = index"
+                    :title="link.title" :value="link.value" :to="link.route" @mouseover="hovered = index"
                     @mouseleave="hovered = null" class="text-uppercase item-link">
                 </v-list-item>
             </v-list>
@@ -68,6 +67,10 @@ const userLinks = computed(() => {
 </script>
 
 <style scoped>
+.app-bg {
+    background-color: #f2f6fc;
+}
+
 /* Sign Out Button Styling */
 .v-btn {
     border: 1px solid teal;

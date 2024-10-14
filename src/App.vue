@@ -2,7 +2,7 @@
   <v-app class="bg-grey-lighten-4">
     <!-- show the navbar only if not on login page -->
     <AppNavbar v-if="showNavbar" />
-    <v-main fluid class="mx-4">
+    <v-main fluid class="mx-3">
       <router-view>
       </router-view>
     </v-main>
