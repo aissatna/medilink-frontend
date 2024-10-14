@@ -7,18 +7,25 @@
             <v-btn color="white" @click="snackbarVisible = false">Close</v-btn>
         </template>
     </v-snackbar>
-
     <h1 class="subheading text-grey-darken-4 my-2">Patients View</h1>
     <v-container>
         <v-card flat>
-            <v-card-title class="d-flex align-center pe-2 bg-teal-lighten-4">
-                <v-text-field v-model="search" density="compact" label="Search by name, medical number..."
-                    prepend-inner-icon="mdi-magnify" max-width="500" variant="solo-filled" hide-details single-line
-                    rounded="pill">
-                </v-text-field>
-                <v-spacer></v-spacer>
-                <!-- Patient Form -->
-                <NewPatientDialog @patientAdded="onPatientAdded" />
+            <v-card-title class="bg-teal-lighten-4">
+                <v-row>
+                    <v-col xs="12" md="6">
+                        <v-text-field v-model="search" density="compact" label="Search by name, medical number..."
+                            prepend-inner-icon="mdi-magnify" min-width="300" max-width="450" variant="solo-filled"
+                            hide-details single-line rounded="pill">
+                        </v-text-field>
+                    </v-col>
+                    <v-col xs="12" md="6" class="d-flex justify-end">
+                        <v-btn color="primary" class="mr-2" style="min-width: 150px;" @click="exportPatients"
+                            prepend-icon="mdi mdi-export-variant">
+                            Export
+                        </v-btn>
+                        <UpsertPatientDialog mode="add" @patientAdded="onPatientAdded" />
+                    </v-col>
+                </v-row>
             </v-card-title>
             <v-divider></v-divider>
             <v-data-table-server v-model:items-per-page="itemsPerPage" :headers="headers" :items="patientItems"
@@ -26,7 +33,7 @@
                 item-value="id" show-expand hover :items-per-page-options="pageSizes" class="text-body-1">
                 <!-- Actions column template -->
                 <template #[`item.actions`]="{ item }">
-                    <v-icon color="teal-darken-2" class="me-2" @click="editPatient(item)">mdi-pencil</v-icon>
+                    <UpsertPatientDialog mode="update" :patient="item" @patientUpdated="onPatientUpdated" />
                     <DeletePatientDialog @patientDeleted="onPatientDeleted" :patient="item" />
                 </template>
                 <!-- Expanded row template -->
@@ -48,15 +55,14 @@
                         </td>
                     </tr>
                 </template>
-
             </v-data-table-server>
         </v-card>
     </v-container>
 </template>
 
 <script setup>
-import NewPatientDialog from '@/components/patient/NewPatientDialog.vue';
 import DeletePatientDialog from '@/components/patient/DeletePatientDialog.vue';
+import UpsertPatientDialog from '@/components/patient/UpsertPatientDialog.vue';
 import PatientService from '@/api/PatientService';
 import { ref, watch } from 'vue';
 
@@ -108,15 +114,12 @@ async function loadItems({ page, itemsPerPage, sortBy }) {
     try {
         // Fetch data from the API
         const response = await PatientService.getPatients(page - 1, itemsPerPage, sortParams, search.value);
-
-        // Update the table data and total items count
         patientItems.value = response.data.content;
         totalItems.value = response.data.totalItems;
 
     } catch (error) {
         console.error('Error loading patients:', error);
     } finally {
-        // Always stop the loading indicator regardless of success or failure
         loading.value = false;
     }
 }
@@ -152,10 +155,29 @@ const onPatientDeleted = () => {
     });
 };
 
-// Functions for patient actions
-const editPatient = (patient) => {
-    alert(`Edit Patient ${patient.id}`);
+// When a patient is updated, reload the items
+const onPatientUpdated = () => {
+    snackbarMessage.value = 'Patient updated successfully!';
+    snackbarVisible.value = true;
+    loadItems({
+        page: 1,
+        itemsPerPage: itemsPerPage.value,
+        sortBy: [],
+    });
 };
+
+const exportPatients = async () => {
+    try {
+        await PatientService.exportPatients();
+        snackbarMessage.value = 'Patients exported successfully by email !';
+        snackbarVisible.value = true;
+    } catch (error) {
+        console.error('Error exporting patients:', error);
+        snackbarMessage.value = 'Error exporting patients. Please try again.';
+        snackbarVisible.value = true;
+    }
+};
+
 
 </script>
 

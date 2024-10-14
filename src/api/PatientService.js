@@ -25,4 +25,14 @@ export default {
         return axios.delete(`${PATIENT_API_BASE_URL}/delete/${patientId}`);
     },
 
+    updatePatient: function(patient) {
+        return axios.put(`${PATIENT_API_BASE_URL}/update/${patient.id}`, patient);
+    },
+
+    exportPatients: function() {
+        console.log('export patients');
+        //TODO: not implemented yet in backend
+        //return axios.post(`${PATIENT_API_BASE_URL}/export`);
+    },
+
 };

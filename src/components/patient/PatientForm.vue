@@ -18,9 +18,17 @@
                             required></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6">
-                        <v-date-picker v-model="patientData.birthDate" label="Date of Birth*"
-                            :rules="[validationRules.required]" :max="new Date().toISOString().slice(0, 10)"
-                            required></v-date-picker>
+                        <v-text-field v-model="patientData.birthDate"
+                            :rules="[validationRules.required, validationRules.date]" label="Date of Birth*"
+                            placeholder="DD/MM/YYYY" prepend-inner-icon="mdi-calendar" @input="formatDate" required>
+                            <template v-slot:append>
+                                <v-tooltip text="Enter date in DD/MM/YYYY format">
+                                    <template v-slot:activator="{ props }">
+                                        <v-icon v-bind="props">mdi-help-circle-outline</v-icon>
+                                    </template>
+                                </v-tooltip>
+                            </template>
+                        </v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6">
                         <v-select v-model="patientData.gender" :items="genderOptions" item-title="title"
@@ -104,7 +112,7 @@ const props = defineProps({
         default: () => ({
             firstName: '',
             lastName: '',
-            birthDate: null,
+            birthDate: '',
             gender: '',
             medicalNumber: '',
             address: '',
@@ -129,6 +137,7 @@ const validationRules = {
     ssn: v => /^\d{9}$/.test(v) || 'SSN must be 9 digits',
     phone: v => /^\d{10}$/.test(v) || 'Phone number must be 10 digits',
     email: v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+    date: v => /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/(19|20)\d\d$/.test(v) || 'Date must be in DD/MM/YYYY format',
 };
 
 const genderOptions = [
@@ -143,6 +152,20 @@ const patientData = reactive({ ...props.patient });
 watch(() => props.patient, (newValue) => {
     Object.assign(patientData, newValue);
 }, { deep: true });
+
+const formatDate = () => {
+    let value = patientData.birthDate.replace(/\D/g, '');
+    if (value.length > 8) value = value.slice(0, 8);
+
+    if (value.length >= 2) {
+        value = value.slice(0, 2) + '/' + value.slice(2);
+    }
+    if (value.length >= 5) {
+        value = value.slice(0, 5) + '/' + value.slice(5);
+    }
+
+    patientData.birthDate = value;
+};
 
 const submitForm = async () => {
     const { valid } = await form.value.validate();

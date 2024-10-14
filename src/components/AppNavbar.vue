@@ -1,14 +1,14 @@
 <template>
     <nav>
         <v-app-bar>
-            <v-toolbar class="app-bg" elevation="8">
+            <v-toolbar class="app-bg" elevation="8" flat>
                 <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
                 <v-toolbar-items class="ml-5">
                     <v-img :width="180" :src="logoUrl" alt="MediLink logo"></v-img>
                 </v-toolbar-items>
                 <v-spacer></v-spacer>
-                <v-btn class="mr-3" to="/" text outlined color="teal darken-3">
-                    <span class="pr-2">Logout</span>
+                <v-btn to="/" text outlined color="teal darken-3">
+                    <span>Logout</span>
                     <v-icon icon="mdi mdi-exit-to-app"></v-icon>
                 </v-btn>
             </v-toolbar>
