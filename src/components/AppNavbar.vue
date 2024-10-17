@@ -1,35 +1,53 @@
 <template>
     <nav>
-        <v-app-bar>
-            <v-toolbar class="app-bg" elevation="8" flat>
-                <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-                <v-toolbar-items class="ml-5">
-                    <v-img :width="180" :src="logoUrl" alt="MediLink logo"></v-img>
-                </v-toolbar-items>
-                <v-spacer></v-spacer>
-                <v-btn to="/" text outlined color="teal darken-3">
-                    <span>Logout</span>
-                    <v-icon icon="mdi mdi-exit-to-app"></v-icon>
-                </v-btn>
-            </v-toolbar>
+        <v-app-bar elevation="2" class="app-bar">
+            <v-app-bar-nav-icon @click.stop="drawer = !drawer" color="primary"></v-app-bar-nav-icon>
+            <!-- cabinet info -->
+            <!-- TODO : get date from the back  -->
+            <div class="d-flex align-center ml-4 text-black">
+                <v-icon icon="mdi-office-building" color="teal" class="mr-2"></v-icon>
+                <span class="text-subtitle-2 font-weight-medium mr-4">Cabinet Name</span>
+                <v-icon icon="mdi-map-marker" color="teal" class="mr-2"></v-icon>
+                <span class="text-subtitle-2">123 Medical Street, City</span>
+            </div>
+            <v-spacer></v-spacer>
+            <v-btn to="/" color="primary" variant="outlined" class="logout-btn">
+                <span class="mr-2">Logout</span>
+                <v-icon>mdi-exit-to-app</v-icon>
+            </v-btn>
         </v-app-bar>
-        <!-- Navigation Drawer -->
-        <v-navigation-drawer v-model="drawer" class="app-bg" elevation="4">
-            <v-list dense>
-                <v-list-item v-for="(link, index) in userLinks" :key="index" :prepend-icon="link.icon"
-                    :title="link.title" :value="link.value" :to="link.route" @mouseover="hovered = index"
-                    @mouseleave="hovered = null" class="text-uppercase item-link">
+
+        <v-navigation-drawer v-model="drawer" class="navigation-drawer" elevation="4">
+            <v-list>
+                <v-list-item class="drawer-header">
+                    <div class="logo-wrapper">
+                        <v-img :width="140" :src="logoUrl" alt="MediLink logo"></v-img>
+                    </div>
+                </v-list-item>
+                <v-divider></v-divider>
+                <v-list-item v-for="(link, index) in userLinks" :key="index" :to="link.route"
+                    :active="$route.path === link.route" active-color="white" class="my-2">
+                    <template v-slot:prepend>
+                        <v-icon :icon="link.icon"></v-icon>
+                    </template>
+                    <v-list-item-title>{{ link.title }}</v-list-item-title>
                 </v-list-item>
             </v-list>
-            <!-- Avatar -->
+
             <template v-slot:append>
-                <div class="mb-3">
-                    <v-divider :thickness="2"></v-divider>
-                    <v-list dense>
-                        <v-list-item :prepend-avatar="avatarUrl" subtitle="sandra_a88@gmail.com" title="Sandra Adams">
-                            <span class="text-subtitle-1 text-capitalize">{{ userRole }}</span>
-                        </v-list-item>
-                    </v-list>
+                <v-divider></v-divider>
+                <div class="user-profile pa-4">
+                    <div class="user-avatar-wrapper mb-3">
+                        <v-avatar size="80">
+                            <v-img :src="avatarUrl"></v-img>
+                        </v-avatar>
+                    </div>
+                    <div class="user-info text-center">
+                        <div class="text-h6">Sandra Adams</div>
+                        <div class="text-subtitle-2 text-medium-emphasis">sandra_a88@gmail.com</div>
+                        <div class="text-caption text-uppercase font-weight-medium mt-1">{{ userRole }}
+                        </div>
+                    </div>
                 </div>
             </template>
         </v-navigation-drawer>
@@ -40,7 +58,7 @@
 import { ref, computed } from 'vue';
 
 const drawer = ref(false);
-const hovered = ref(null);
+
 const userRole = ref('secretary');
 
 const links = [
@@ -67,34 +85,70 @@ const userLinks = computed(() => {
 </script>
 
 <style scoped>
-.app-bg {
-    background-color: #f2f6fc;
+.app-bar {
+    background: linear-gradient(to right, var(--primary-color), var(--primary-light));
+    color: white;
+    padding: 0 16px;
 }
 
-/* Sign Out Button Styling */
-.v-btn {
-    border: 1px solid teal;
-    background-color: white;
-    color: teal;
+.logout-btn {
+    border-radius: 8px;
+    padding: 0 16px;
 }
 
-.v-btn:hover {
-    background-color: teal;
-    color: white !important;
+.navigation-drawer {
+    background-color: #4CAF50;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Hover Effect on Menu Items */
-.item-link:hover {
-    background-color: #87cac3 !important;
-    cursor: pointer;
+.drawer-header {
+    padding: 16px;
+    background-color: var(--primary-color);
 }
 
-.v-list-item :deep(.v-avatar.v-avatar--density-default) {
-    border: 1px solid teal !important;
+.logo-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
 }
 
-.v-list-item :deep(.v-avatar.v-avatar--size-default) {
-    height: 50px !important;
-    width: 50px !important;
+.user-profile {
+    background-color: var(--background-color);
+    border-top: 1px solid #E5E5E5;
+    padding: 16px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.user-profile {
+    background-color: var(--background-color);
+    border-top: 1px solid #E5E5E5;
+    padding: 16px;
+}
+
+.user-avatar-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Add a subtle shadow to the avatar for depth */
+.v-avatar {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Add a hover effect to the avatar */
+.v-avatar:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
 }
 </style>

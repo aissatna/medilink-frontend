@@ -1,13 +1,13 @@
 <template>
     <div>
-        <v-btn v-if="mode === 'add'" style="min-width: 150px;" prepend-icon="mdi mdi-plus-circle-outline"
-            color="success" @click="openDialog">
+        <v-btn v-if="mode === 'add'" class="action-btn" color="white" variant="outlined"
+            prepend-icon="mdi mdi-plus-circle-outline" olor="white" @click="openDialog">
             New Patient
         </v-btn>
-        <v-icon v-else color="teal-darken-2" class="me-2" @click="openDialog">
+        <v-icon v-else size="large" color="teal-darken-2" class="me-2" @click="openDialog">
             mdi-pencil
         </v-icon>
-        <v-dialog v-model="dialog" max-width="800px">
+        <v-dialog v-model="dialog" max-width="800px" transition="dialog-bottom-transition">
             <v-card>
                 <v-card-title class="text-h5 bg-primary text-white font-weight-bold">
                     {{ dialogTitle }}
@@ -82,7 +82,18 @@ const handleSubmit = async (patientData) => {
 </script>
 
 <style scoped>
-.v-card-title {
-    font-size: 1.5rem;
+.action-btn {
+    height: 40px;
+    width: 180px;
+}
+
+.dialog-bottom-transition-enter-active,
+.dialog-bottom-transition-leave-active {
+    transition: transform 0.3s ease-in-out;
+}
+
+.dialog-bottom-transition-enter-from,
+.dialog-bottom-transition-leave-to {
+    transform: translateY(100%);
 }
 </style>
