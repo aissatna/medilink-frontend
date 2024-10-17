@@ -1,39 +1,37 @@
 <template>
-    <div>
-        <v-icon color="red-lighten-1" @click="dialog = true">mdi-delete</v-icon>
-        <v-dialog v-model="dialog" max-width="450px">
-            <v-card>
-                <v-card-title class="text-h5 bg-red-lighten-1 text-white pa-4">
-                    Delete Patient?
-                </v-card-title>
-                <v-card-text class="pt-6 pb-4 px-4">
-                    <div class="d-flex">
-                        <v-avatar color="red-lighten-1" size="40" class="mr-4">
-                            <v-icon color="white" size="28">mdi-alert</v-icon>
-                        </v-avatar>
-                        <div>
-                            <p class="text-body-1 mb-2">
-                                Are you sure you want to permanently delete <b>{{ patientName }}</b>'s patient record?
-                            </p>
-                            <p class="text-body-2 text-medium-emphasis">
-                                This action cannot be undone.
-                            </p>
-                        </div>
+    <v-icon size="large" color="red-lighten-1" @click="dialog = true">mdi-delete</v-icon>
+    <v-dialog v-model="dialog" max-width="500">
+        <v-card class="rounded-lg">
+            <v-card-title class="text-h5 bg-red-lighten-1 text-white pa-4">
+                Delete Patient?
+            </v-card-title>
+            <v-card-text class="pt-6 pb-4 px-4">
+                <div class="d-flex">
+                    <v-avatar color="red-lighten-1" size="40" class="mr-4">
+                        <v-icon color="white" size="28">mdi-alert</v-icon>
+                    </v-avatar>
+                    <div>
+                        <p class="text-body-1 mb-2">
+                            Are you sure you want to permanently delete <b>{{ patientName }}</b>'s patient record?
+                        </p>
+                        <p class="text-body-2 text-medium-emphasis">
+                            This action cannot be undone.
+                        </p>
                     </div>
-                </v-card-text>
-                <v-card-actions class="pa-4">
-                    <v-spacer></v-spacer>
-                    <v-btn color="grey-darken-1" variant="text" @click="closeDialog" class="mr-4" :ripple="false">
-                        Cancel
-                    </v-btn>
-                    <v-btn color="error-darken-1" variant="flat" @click="confirmDelete" :ripple="false"
-                        :loading="isLoading" :disabled="isLoading">
-                        Delete
-                    </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
-    </div>
+                </div>
+            </v-card-text>
+            <v-card-actions class="pa-4">
+                <v-spacer></v-spacer>
+                <v-btn color="grey-darken-1" variant="text" @click="closeDialog" class="mr-4" :ripple="false">
+                    Cancel
+                </v-btn>
+                <v-btn color="error-darken-1" variant="flat" @click="confirmDelete" :ripple="false" :loading="isLoading"
+                    :disabled="isLoading">
+                    Delete
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
 </template>
 
 <script setup>
@@ -77,5 +75,4 @@ const closeDialog = () => {
 };
 
 </script>
-
 <style scoped></style>

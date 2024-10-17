@@ -104,6 +104,8 @@
 </template>
 
 <script setup>
+import { genderOptions } from '@/utils/constants';
+import { validationRules } from '@/utils/validationRules';
 import { ref, reactive, watch } from 'vue';
 
 const props = defineProps({
@@ -131,19 +133,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['submit', 'cancel']);
-
-const validationRules = {
-    required: v => !!v || 'This field is required',
-    ssn: v => /^\d{9}$/.test(v) || 'SSN must be 9 digits',
-    phone: v => /^\d{10}$/.test(v) || 'Phone number must be 10 digits',
-    email: v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
-    date: v => /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/(19|20)\d\d$/.test(v) || 'Date must be in DD/MM/YYYY format',
-};
-
-const genderOptions = [
-    { title: 'Male', value: 'M' },
-    { title: 'Female', value: 'F' },
-];
 
 const form = ref(null);
 const activeTab = ref('personal');
@@ -181,7 +170,7 @@ const submitForm = async () => {
 }
 
 .v-window {
-    background-color: #f5f5f5;
+    background-color: var(--background-color);
     border-radius: 0 0 4px 4px;
 }
 

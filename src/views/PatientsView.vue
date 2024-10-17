@@ -1,61 +1,76 @@
 <template>
-    <!-- Snackbar on patient actions -->
-    <v-snackbar v-model="snackbarVisible" :timeout="3000" color="success" location="right top"
-        @click:outside="snackbarVisible = false">
-        {{ snackbarMessage }}
-        <template v-slot:actions>
-            <v-btn color="white" @click="snackbarVisible = false">Close</v-btn>
-        </template>
-    </v-snackbar>
-    <h1 class="subheading text-grey-darken-4 my-2">Patients View</h1>
-    <v-container>
-        <v-card flat>
-            <v-card-title class="bg-teal-lighten-4">
-                <v-row>
-                    <v-col xs="12" md="6">
-                        <v-text-field v-model="search" density="compact" label="Search by name, medical number..."
-                            prepend-inner-icon="mdi-magnify" min-width="300" max-width="450" variant="solo-filled"
-                            hide-details single-line rounded="pill">
-                        </v-text-field>
+    <v-container fluid class="pa-6">
+        <!-- Snackbar for notifications -->
+        <v-snackbar v-model="snackbarVisible" :timeout="3000" :color="snackbarColor" location="top" rounded="pill">
+            {{ snackbarMessage }}
+            <template v-slot:actions>
+                <v-btn color="white" text @click="snackbarVisible = false">Close</v-btn>
+            </template>
+        </v-snackbar>
+        <v-card class="elevation-2 rounded-lg">
+            <v-card-title class="py-4 px-6 bg-primary text-white">
+                <v-row class="align-start" no-gutters>
+                    <v-col cols="12" sm="6">
+                        <h1 class="text-h5 font-weight-bold">Patients Management</h1>
                     </v-col>
-                    <v-col xs="12" md="6" class="d-flex justify-end">
-                        <v-btn color="primary" class="mr-2" style="min-width: 150px;" @click="exportPatients"
-                            prepend-icon="mdi mdi-export-variant">
-                            Export
-                        </v-btn>
-                        <UpsertPatientDialog mode="add" @patientAdded="onPatientAdded" />
+                    <v-col cols="12" sm="6" class="mt-4 mt-sm-0">
+                        <v-row justify="end" no-gutters>
+                            <v-col cols="auto" class="mr-2 mb-2">
+                                <UpsertPatientDialog mode="add" @patientAdded="onPatientAdded" />
+                            </v-col>
+                            <v-col cols="auto" class="mr-2 mb-2">
+                                <v-btn color="white" variant="outlined" @click="exportPatients"
+                                    prepend-icon="mdi-export-variant" class="action-btn">
+                                    Export Patients
+                                </v-btn>
+                            </v-col>
+                        </v-row>
                     </v-col>
                 </v-row>
             </v-card-title>
-            <v-divider></v-divider>
-            <v-data-table-server v-model:items-per-page="itemsPerPage" :headers="headers" :items="patientItems"
-                :items-length="totalItems" :loading="loading" @update:options="loadItems" :search="search"
-                item-value="id" show-expand hover :items-per-page-options="pageSizes" class="text-body-1">
-                <!-- Actions column template -->
-                <template #[`item.actions`]="{ item }">
-                    <UpsertPatientDialog mode="update" :patient="item" @patientUpdated="onPatientUpdated" />
-                    <DeletePatientDialog @patientDeleted="onPatientDeleted" :patient="item" />
-                </template>
-                <!-- Expanded row template -->
-                <template #[`expanded-row`]="{ item }">
-                    <tr class="text-center">
-                        <td colspan="8">
-                            <v-row>
-                                <v-col cols="4">
-                                    <strong>Email: </strong> {{ item.email }}
-                                </v-col>
-                                <v-col cols="4">
-                                    <strong>Phone: </strong> {{ item.phone }}
-                                </v-col>
+            <v-card-text class="pa-6">
+                <v-row>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-text-field v-model="search" label="Search patients" prepend-inner-icon="mdi-magnify"
+                            variant="outlined" density="comfortable" hide-details clearable></v-text-field>
+                    </v-col>
+                </v-row>
+                <v-data-table-server v-model:items-per-page="itemsPerPage" :headers="headers" :items="patientItems"
+                    :items-length="totalItems" :loading="loading" @update:options="loadItems" :search="search"
+                    item-value="id" show-expand hover :items-per-page-options="pageSizes"
+                    class="mt-4 elevation-1 rounded-lg text-body-1">
 
-                                <v-col cols="4">
-                                    <strong>Address: </strong> {{ item.address }}
-                                </v-col>
-                            </v-row>
+                    <template #[`item.phone`]="{ item }">
+                        {{ formatPhoneNumber(item.phone) }}
+                    </template>
+
+                    <!-- Actions column template -->
+                    <template #[`item.actions`]="{ item }">
+                        <div class="d-flex">
+                            <UpsertPatientDialog mode="update" :patient="item" @patientUpdated="onPatientUpdated" />
+                            <DeletePatientDialog @patientDeleted="onPatientDeleted" :patient="item" />
+                        </div>
+                    </template>
+                    <!-- Expanded row template -->
+                    <template #expanded-row="{ item }">
+                        <td :colspan="headers.length">
+                            <v-card flat class="ma-2 pa-2 bg-grey-lighten-4">
+                                <v-row>
+                                    <v-col cols="4">
+                                        <strong>Email:</strong> {{ item.email }}
+                                    </v-col>
+                                    <v-col cols="4">
+                                        <strong>Address:</strong> {{ item.address }}
+                                    </v-col>
+                                    <v-col cols="4">
+                                        <strong>Visits:</strong> {{ item.visits }}
+                                    </v-col>
+                                </v-row>
+                            </v-card>
                         </td>
-                    </tr>
-                </template>
-            </v-data-table-server>
+                    </template>
+                </v-data-table-server>
+            </v-card-text>
         </v-card>
     </v-container>
 </template>
@@ -64,8 +79,8 @@
 import DeletePatientDialog from '@/components/patient/DeletePatientDialog.vue';
 import UpsertPatientDialog from '@/components/patient/UpsertPatientDialog.vue';
 import PatientService from '@/api/PatientService';
+import { pageSizes } from '@/utils/constants';
 import { ref, watch } from 'vue';
-
 
 // Constants
 const DEFAULT_SORT_KEY = 'firstName';
@@ -84,25 +99,21 @@ const snackbarMessage = ref('');
 
 // Table headers
 const headers = [
-    { title: '', key: 'data-table-expand', sortable: false }, // Expand arrow column
-    { title: 'First Name', key: 'firstName', sortable: true }, // Sort directly by key
-    { title: 'Last Name', key: 'lastName', sortable: true },
+    { title: '', key: 'data-table-expand', sortable: false },
     { title: 'Gender', key: 'gender', sortable: true },
+    { title: 'First Name', key: 'firstName', sortable: true },
+    { title: 'Last Name', key: 'lastName', sortable: true },
     { title: 'Medical Number', key: 'medicalNumber', sortable: true },
     { title: 'Birth Date', key: 'birthDate', sortable: true },
-    { title: 'Visits', key: 'visits', sortable: true },
-    { title: 'Actions', key: 'actions', sortable: false }, // No sorting for actions
-];
-
-// Page size options
-const pageSizes = [
-    { value: 5, title: '5' },
-    { value: 10, title: '10' },
-    { value: 20, title: '20' },
-    { value: -1, title: '$vuetify.dataFooter.itemsPerPageAll' },
+    { title: 'Phone', key: 'phone', sortable: true },
+    { title: 'Actions', key: 'actions', sortable: false },
 ];
 
 
+const formatPhoneNumber = (phone) => {
+    if (!phone) return '';
+    return phone.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
+};
 async function loadItems({ page, itemsPerPage, sortBy }) {
     loading.value = true;
 
@@ -177,8 +188,14 @@ const exportPatients = async () => {
         snackbarVisible.value = true;
     }
 };
-
-
 </script>
+<style scoped>
+.bg-primary {
+    background-color: var(--v-primary-base);
+}
 
-<style scoped></style>
+.action-btn {
+    height: 40px;
+    width: 180px;
+}
+</style>
