@@ -5,6 +5,8 @@ import AccountView from '@/views/AccountView.vue';
 import NursesView from '@/views/NursesView.vue';
 import PatientsView from '@/views/PatientsView.vue';
 import VisitsView from '@/views/VisitsView.vue';
+import SecretariesView from '@/views/SecretariesView.vue';
+import CabinetView from '@/views/CabinetView.vue';
 
 const routes = [
   {
@@ -36,6 +38,16 @@ const routes = [
     path: '/visits',
     name: 'visits',
     component: VisitsView,
+  },
+  {
+    path: '/secretaries',
+    name: 'secretaries',
+    component: SecretariesView,
+  },
+  {
+    path: '/cabinet',
+    name: 'cabinet',
+    component: CabinetView,
   },
 
 

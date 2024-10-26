@@ -1,51 +1,59 @@
 <template>
     <nav>
-        <v-app-bar elevation="2" class="app-bar">
+        <v-app-bar elevation="2" class="py-0 px-4" color="bgColor">
             <v-app-bar-nav-icon @click.stop="drawer = !drawer" color="primary"></v-app-bar-nav-icon>
             <!-- cabinet info -->
-            <!-- TODO : get date from the back  -->
             <div class="d-flex align-center ml-4 text-black">
                 <v-icon icon="mdi-office-building" color="teal" class="mr-2"></v-icon>
-                <span class="text-subtitle-2 font-weight-medium mr-4">Cabinet Name</span>
+                <span class="text-subtitle-2 font-weight-medium mr-4">{{ userStore.userInfo.cabinetName }}</span>
                 <v-icon icon="mdi-map-marker" color="teal" class="mr-2"></v-icon>
-                <span class="text-subtitle-2">123 Medical Street, City</span>
+                <span class="text-subtitle-2">{{ userStore.userInfo.cabinetAddress }}</span>
             </div>
             <v-spacer></v-spacer>
-            <v-btn to="/" color="primary" variant="outlined" class="logout-btn">
+            <v-btn @click="handleSignOut" color="primary" variant="outlined" class="py-0 px-4 rounded-lg">
                 <span class="mr-2">Logout</span>
                 <v-icon>mdi-exit-to-app</v-icon>
             </v-btn>
         </v-app-bar>
 
-        <v-navigation-drawer v-model="drawer" class="navigation-drawer" elevation="4">
+        <v-navigation-drawer v-model="drawer" class="drawer" elevation="4">
             <v-list>
-                <v-list-item class="drawer-header">
-                    <div class="logo-wrapper">
+                <v-list-item class="pa-3">
+                    <div class="d-flex justify-center w-100">
                         <v-img :width="140" :src="logoUrl" alt="MediLink logo"></v-img>
                     </div>
                 </v-list-item>
                 <v-divider></v-divider>
-                <v-list-item v-for="(link, index) in userLinks" :key="index" :to="link.route"
-                    :active="$route.path === link.route" active-color="white" class="my-2">
+                <v-list-item v-for="(link, index) in links" :key="index" :to="link.route"
+                    :active="$route.path === link.route" color="white" class="my-2">
                     <template v-slot:prepend>
                         <v-icon :icon="link.icon"></v-icon>
                     </template>
                     <v-list-item-title>{{ link.title }}</v-list-item-title>
                 </v-list-item>
             </v-list>
-
             <template v-slot:append>
                 <v-divider></v-divider>
-                <div class="user-profile pa-4">
-                    <div class="user-avatar-wrapper mb-3">
-                        <v-avatar size="80">
-                            <v-img :src="avatarUrl"></v-img>
-                        </v-avatar>
+                <div class="user-profile">
+                    <div class="d-flex justify-center mb-3">
+                        <router-link to="/account">
+                            <v-avatar size="80">
+                                <template v-if="userStore.userInfo.photoUrl">
+                                    <v-img :src="userStore.userInfo.photoUrl"></v-img>
+                                </template>
+                                <template v-else>
+                                    <v-avatar color="primary" size="80">
+                                        <span class="text-h5 white--text">{{ userInitials }}</span>
+                                    </v-avatar>
+                                </template>
+                            </v-avatar>
+                        </router-link>
                     </div>
-                    <div class="user-info text-center">
-                        <div class="text-h6">Sandra Adams</div>
-                        <div class="text-subtitle-2 text-medium-emphasis">sandra_a88@gmail.com</div>
-                        <div class="text-caption text-uppercase font-weight-medium mt-1">{{ userRole }}
+                    <div class="d-flex flex-column align-center text-center">
+                        <div class="text-h6">{{ userStore.userInfo.firstName }} {{ userStore.userInfo.lastName }}</div>
+                        <div class="text-subtitle-2 text-medium-emphasis">{{ userStore.userInfo.email }}</div>
+                        <div class="text-caption text-uppercase font-weight-medium mt-1">
+                            {{ userStore.userInfo.roleName }}
                         </div>
                     </div>
                 </div>
@@ -56,97 +64,49 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import userLinks from '@/utils/userLinks';
+import { useUserStore } from '@/stores/userStore';
+import { useAuthStore } from '@/stores/authStore';
 
+const userStore = useUserStore();
+const authStore = useAuthStore();
 const drawer = ref(false);
-
-const userRole = ref('secretary');
-
-const links = [
-    { title: 'HOME', icon: 'mdi mdi-home-outline', value: 'Home', route: "/home" },
-    { title: 'PATIENTS', icon: 'mdi mdi-account-heart-outline', value: 'Patients', route: "/patients" },
-    { title: 'NURSES', icon: 'mdi mdi-account-group', value: 'Nurses', route: "/nurses" },
-    { title: 'VISITS', icon: 'mdi mdi-calendar-check', value: 'Visits', route: "/visits" },
-    { title: 'ACCOUNT', icon: 'mdi mdi-account', value: 'Account', route: "/account" },
-];
+const links = userLinks(userStore.userInfo.roleName);
 
 // images
 const images = require.context('../assets', true, /\.png$/);
-const avatarUrl = images('./avatar.png');
 const logoUrl = images('./logo.png');
 
-
-const userLinks = computed(() => {
-    if (userRole.value === 'nurse') {
-        return links.filter(link => link.title !== 'PATIENTS' && link.title !== 'NURSES');
-    }
-    return links;
+const userInitials = computed(() => {
+    const firstName = userStore.userInfo.firstName || '';
+    const lastName = userStore.userInfo.lastName || '';
+    return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
 });
+
+// Handle logout
+
+async function handleSignOut() {
+    authStore.logout();
+}
 
 </script>
 
 <style scoped>
-.app-bar {
-    background: linear-gradient(to right, var(--primary-color), var(--primary-light));
-    color: white;
-    padding: 0 16px;
-}
-
-.logout-btn {
-    border-radius: 8px;
-    padding: 0 16px;
-}
-
-.navigation-drawer {
-    background-color: #4CAF50;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-}
-
-.drawer-header {
-    padding: 16px;
-    background-color: var(--primary-color);
-}
-
-.logo-wrapper {
-    display: flex;
-    justify-content: center;
-    width: 100%;
+/* rgb(var(--v-theme-background-color)) */
+.drawer {
+    background-color: #7FB77E;
+    color: black;
 }
 
 .user-profile {
-    background-color: var(--background-color);
-    border-top: 1px solid #E5E5E5;
+    border-top: 1px solid rgb(var(--v-theme-bgColor));
     padding: 16px;
 }
 
-.user-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.user-profile {
-    background-color: var(--background-color);
-    border-top: 1px solid #E5E5E5;
-    padding: 16px;
-}
-
-.user-avatar-wrapper {
-    display: flex;
-    justify-content: center;
-}
-
-.user-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* Add a subtle shadow to the avatar for depth */
 .v-avatar {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgb(var(--v-theme-primary));
 }
 
-/* Add a hover effect to the avatar */
 .v-avatar:hover {
     transform: scale(1.05);
     transition: transform 0.3s ease;
