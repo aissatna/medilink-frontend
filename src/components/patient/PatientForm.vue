@@ -5,7 +5,7 @@
             <v-tab value="contact">Contact Information</v-tab>
         </v-tabs>
         <v-window v-model="activeTab" class="mt-6">
-            <v-window-item value="personal">
+            <v-window-item class="pa-5" value="personal">
                 <v-row>
                     <v-col cols="12" sm="6">
                         <v-text-field v-model="patientData.firstName" :rules="[validationRules.required]"
@@ -50,7 +50,7 @@
                     </v-col>
                 </v-row>
             </v-window-item>
-            <v-window-item value="contact">
+            <v-window-item class="pa-5" value="contact">
                 <v-row>
                     <v-col cols="12">
                         <v-text-field v-model="patientData.address" :rules="[validationRules.required]" label="Address*"
@@ -170,11 +170,7 @@ const submitForm = async () => {
 }
 
 .v-window {
-    background-color: var(--background-color);
+    background-color: rgb(var(--v-theme-bgColor));
     border-radius: 0 0 4px 4px;
-}
-
-.v-window-item {
-    padding: 20px;
 }
 </style>

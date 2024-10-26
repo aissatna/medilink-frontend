@@ -1,12 +1,8 @@
 <template>
+    <!-- Snackbar for notifications -->
+    <AppSnackbar v-model:show="snackbar.show" :text="snackbar.text" :color="snackbar.color" location="top" />
+
     <v-container fluid class="pa-6">
-        <!-- Snackbar for notifications -->
-        <v-snackbar v-model="snackbarVisible" :timeout="3000" :color="snackbarColor" location="top" rounded="pill">
-            {{ snackbarMessage }}
-            <template v-slot:actions>
-                <v-btn color="white" text @click="snackbarVisible = false">Close</v-btn>
-            </template>
-        </v-snackbar>
         <v-card class="elevation-2 rounded-lg">
             <v-card-title class="py-4 px-6 bg-primary text-white">
                 <v-row class="align-start" no-gutters>
@@ -76,11 +72,12 @@
 </template>
 
 <script setup>
+import AppSnackbar from '@/components/shared/AppSnackbar.vue';
 import DeletePatientDialog from '@/components/patient/DeletePatientDialog.vue';
 import UpsertPatientDialog from '@/components/patient/UpsertPatientDialog.vue';
-import PatientService from '@/api/PatientService';
+import PatientService from '@/api/services/PatientService';
 import { pageSizes } from '@/utils/constants';
-import { ref, watch } from 'vue';
+import { ref, watch, reactive } from 'vue';
 
 // Constants
 const DEFAULT_SORT_KEY = 'firstName';
@@ -94,8 +91,11 @@ const totalItems = ref(0);
 const itemsPerPage = ref(5);
 
 // Snackbar
-const snackbarVisible = ref(false);
-const snackbarMessage = ref('');
+const snackbar = reactive({
+    show: false,
+    text: '',
+    color: 'success',
+});
 
 // Table headers
 const headers = [
@@ -109,6 +109,11 @@ const headers = [
     { title: 'Actions', key: 'actions', sortable: false },
 ];
 
+const showSnackbar = (text, color = 'success') => {
+    snackbar.text = text;
+    snackbar.color = color;
+    snackbar.show = true;
+};
 
 const formatPhoneNumber = (phone) => {
     if (!phone) return '';
@@ -146,8 +151,7 @@ watch(search, () => {
 
 // When a new patient is added, reload the items
 const onPatientAdded = () => {
-    snackbarMessage.value = 'Patient added successfully!';
-    snackbarVisible.value = true;
+    showSnackbar('Patient added successfully!');
     loadItems({
         page: 1,
         itemsPerPage: itemsPerPage.value,
@@ -157,8 +161,7 @@ const onPatientAdded = () => {
 
 // When a patient is deleted, reload the items
 const onPatientDeleted = () => {
-    snackbarMessage.value = 'Patient deleted successfully!';
-    snackbarVisible.value = true;
+    showSnackbar('Patient deleted successfully!');
     loadItems({
         page: 1,
         itemsPerPage: itemsPerPage.value,
@@ -168,8 +171,7 @@ const onPatientDeleted = () => {
 
 // When a patient is updated, reload the items
 const onPatientUpdated = () => {
-    snackbarMessage.value = 'Patient updated successfully!';
-    snackbarVisible.value = true;
+    showSnackbar('Patient updated successfully!');
     loadItems({
         page: 1,
         itemsPerPage: itemsPerPage.value,
@@ -180,20 +182,14 @@ const onPatientUpdated = () => {
 const exportPatients = async () => {
     try {
         await PatientService.exportPatients();
-        snackbarMessage.value = 'Patients exported successfully by email !';
-        snackbarVisible.value = true;
+        showSnackbar('Patients exported successfully by email!');
     } catch (error) {
         console.error('Error exporting patients:', error);
-        snackbarMessage.value = 'Error exporting patients. Please try again.';
-        snackbarVisible.value = true;
+        showSnackbar('Error exporting patients. Please try again.', 'error');
     }
 };
 </script>
 <style scoped>
-.bg-primary {
-    background-color: var(--v-primary-base);
-}
-
 .action-btn {
     height: 40px;
     width: 180px;

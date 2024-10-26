@@ -23,7 +23,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import PatientService from '@/api/PatientService';
+import PatientService from '@/api/services/PatientService';
 import PatientForm from './PatientForm.vue';
 
 const props = defineProps({

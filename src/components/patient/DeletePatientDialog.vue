@@ -37,7 +37,7 @@
 <script setup>
 
 import { ref, computed } from 'vue';
-import PatientService from '@/api/PatientService';
+import PatientService from '@/api/services/PatientService';
 
 const props = defineProps({
     patient: {
