@@ -42,7 +42,7 @@
     <v-card>
       <v-card-title>Forgot Password</v-card-title>
       <v-card-text>
-        <v-form @submit.prevent="handleForgotPasswordSubmit" ref="forgotPassworForm">
+        <v-form @submit.prevent="handleForgotPasswordSubmit" ref="forgotPasswordForm">
           <v-text-field v-model="forgotPasswordDialog.email" label="Email" type="email" prepend-inner-icon="mdi-email"
             :rules="[validationRules.required, validationRules.email]" required class="mb-2"></v-text-field>
           <v-card-actions class="justify-center">
@@ -75,7 +75,7 @@ const authStore = useAuthStore();
 
 const router = useRouter();
 const loginForm = ref(null);
-const forgotPassworForm = ref(null);
+const forgotPasswordForm = ref(null);
 const showPassword = ref(false);
 const loading = ref(false);
 const snackbar = reactive({
@@ -109,17 +109,20 @@ const showSnackbar = (text, color) => {
 };
 
 const handleLogin = async () => {
-  if (loginForm.value.validate()) {
+  const validation = await loginForm.value?.validate();
+  if (validation?.valid) {
     loading.value = true;
     try {
-      const data = (await AuthService.signIn(userCredentials)).data;
+      const { data } = await AuthService.signIn(userCredentials);
       await onLoginSuccess(data.accessToken);
     } catch (error) {
-      console.error(error);
+      console.error('Login error:', error);
       showSnackbar('Invalid email or password', 'error');
     } finally {
       loading.value = false;
     }
+  } else {
+    showSnackbar('Please correct the highlighted errors', 'error');
   }
 };
 
@@ -129,24 +132,26 @@ async function onLoginSuccess(accessToken) {
     await userStore.getUserInfo();
     await router.push('/home');
   } catch (error) {
-    console.error(error);
+    console.error('Error retrieving user information:', error);
   }
-
 }
 
 const handleForgotPasswordSubmit = async () => {
-  if (forgotPassworForm.value.validate()) {
+  const validation = await forgotPasswordForm.value?.validate();
+  if (validation?.valid) {
     forgotPasswordDialog.loading = true;
     try {
       await AuthService.resetPassword(forgotPasswordDialog.email);
-      showSnackbar('New Password sent to your email', 'success');
+      showSnackbar('A new password has been sent to your email', 'success');
       forgotPasswordDialog.show = false;
     } catch (error) {
-      console.error(error);
-      showSnackbar('Failed to send new password. Please try again.', 'error');
+      console.error('Password reset error:', error);
+      showSnackbar('Failed to send a new password. Please try again.', 'error');
     } finally {
       forgotPasswordDialog.loading = false;
     }
+  } else {
+    showSnackbar('Please enter a valid email address', 'error');
   }
 };
 

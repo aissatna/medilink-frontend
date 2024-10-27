@@ -157,8 +157,8 @@ const formatDate = () => {
 };
 
 const submitForm = async () => {
-    const { valid } = await form.value.validate();
-    if (valid) {
+    const validation = await form.value?.validate();
+    if (validation?.valid) {
         emit('submit', { ...patientData });
     }
 };
