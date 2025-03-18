@@ -29,10 +29,10 @@ export default {
         return axiosInstance.put(`/patients/update/${patient.id}`, patient);
     },
 
-    exportPatients: function () {
-        console.log('export patients');
-        //TODO: not implemented yet in backend
-        //return axios.post(`${PATIENT_API_BASE_URL}/export`);
+    exportPatients: function (search) {
+        return axiosInstance.post('/patients/export', null, {
+            params: { search },
+        });
     },
 
 };
