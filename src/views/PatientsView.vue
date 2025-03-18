@@ -77,6 +77,7 @@ import DeletePatientDialog from '@/components/patient/DeletePatientDialog.vue';
 import UpsertPatientDialog from '@/components/patient/UpsertPatientDialog.vue';
 import PatientService from '@/api/services/PatientService';
 import { pageSizes } from '@/utils/constants';
+import { formatPhoneNumber } from '@/utils/formatters';
 import { ref, watch, reactive } from 'vue';
 
 // Constants
@@ -115,10 +116,7 @@ const showSnackbar = (text, color = 'success') => {
     snackbar.show = true;
 };
 
-const formatPhoneNumber = (phone) => {
-    if (!phone) return '';
-    return phone.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
-};
+
 async function loadItems({ page, itemsPerPage, sortBy }) {
     loading.value = true;
 
@@ -181,7 +179,7 @@ const onPatientUpdated = () => {
 
 const exportPatients = async () => {
     try {
-        await PatientService.exportPatients();
+        await PatientService.exportPatients(search.value);
         showSnackbar('Patients exported successfully by email!');
     } catch (error) {
         console.error('Error exporting patients:', error);

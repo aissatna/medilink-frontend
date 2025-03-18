@@ -25,7 +25,7 @@
                 </v-list-item>
                 <v-divider></v-divider>
                 <v-list-item v-for="(link, index) in links" :key="index" :to="link.route"
-                    :active="$route.path === link.route" color="white" class="my-2">
+                    :active="$route.path === link.route" color="primary" class="my-2">
                     <template v-slot:prepend>
                         <v-icon :icon="link.icon"></v-icon>
                     </template>
@@ -37,15 +37,12 @@
                 <div class="user-profile">
                     <div class="d-flex justify-center mb-3">
                         <router-link to="/account">
-                            <v-avatar size="80">
-                                <template v-if="userStore.userInfo.photoUrl">
-                                    <v-img :src="userStore.userInfo.photoUrl"></v-img>
-                                </template>
-                                <template v-else>
-                                    <v-avatar color="primary" size="80">
-                                        <span class="text-h5 white--text">{{ userInitials }}</span>
-                                    </v-avatar>
-                                </template>
+                            <v-avatar size="80" :color="userStore.userInfo.photoUrl ? undefined : 'primary'">
+                                <v-img v-if="userStore.userInfo.photoUrl" :src="userStore.userInfo.photoUrl"
+                                    :alt="`${userStore.userInfo.firstName} ${userStore.userInfo.lastName}`"></v-img>
+                                <span v-else class="text-h5 white--text">{{
+                                    getInitials(userStore.userInfo.firstName, userStore.userInfo.lastName)
+                                }}</span>
                             </v-avatar>
                         </router-link>
                     </div>
@@ -63,8 +60,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import userLinks from '@/utils/userLinks';
+import { getInitials } from '@/utils/formatters';
 import { useUserStore } from '@/stores/userStore';
 import { useAuthStore } from '@/stores/authStore';
 
@@ -77,14 +75,7 @@ const links = userLinks(userStore.userInfo.roleName);
 const images = require.context('../assets', true, /\.png$/);
 const logoUrl = images('./logo.png');
 
-const userInitials = computed(() => {
-    const firstName = userStore.userInfo.firstName || '';
-    const lastName = userStore.userInfo.lastName || '';
-    return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
-});
-
 // Handle logout
-
 async function handleSignOut() {
     authStore.logout();
 }
@@ -94,7 +85,7 @@ async function handleSignOut() {
 <style scoped>
 /* rgb(var(--v-theme-background-color)) */
 .drawer {
-    background-color: #7FB77E;
+    background-color: #bbebd9;
     color: black;
 }
 

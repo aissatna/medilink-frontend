@@ -58,7 +58,6 @@ const submitButtonText = computed(() => props.mode === 'add' ? 'Save' : 'Update'
 
 const openDialog = () => {
     currentPatient.value = { ...props.patient };
-    console.log(currentPatient.value);
     dialog.value = true;
 };
 
@@ -67,10 +66,10 @@ const handleSubmit = async (patientData) => {
     try {
         if (props.mode === 'add') {
             await PatientService.addNewPatient(patientData);
-            emit('patientAdded', patientData);
+            emit('patientAdded');
         } else {
             await PatientService.updatePatient(patientData);
-            emit('patientUpdated', patientData);
+            emit('patientUpdated');
         }
         dialog.value = false;
     } catch (error) {
