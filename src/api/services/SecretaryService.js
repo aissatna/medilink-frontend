@@ -1,7 +1,7 @@
 import axiosInstance from "../axiosInstance";
 
 export default {
-    getNurses: function (pageNumber, pageSize, sortBy, search) {
+    getSecretaries: function (pageNumber, pageSize, sortBy, search) {
         const params = new URLSearchParams({
             page: pageNumber,
             size: pageSize,
@@ -12,31 +12,31 @@ export default {
         if (search) {
             params.append('search', search);
         }
-        return axiosInstance.get('/nurses/table', { params });
+        return axiosInstance.get('/secretaries/table', { params });
 
     },
-    addNewNurse: function (formData) {
-        return axiosInstance.post('/nurses/add', formData, {
+    addNewSecretary: function (formData) {
+        return axiosInstance.post('/secretaries/add', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         });
     },
 
-    updateNurse: function (nurseId, formData) {
-        return axiosInstance.put(`/nurses/update/${nurseId}`, formData, {
+    updateSecretary: function (secretaryId, formData) {
+        return axiosInstance.put(`/secretaries/update/${secretaryId}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         });
     },
 
-    deleteNurse: function (nurseId) {
-        return axiosInstance.delete(`/nurses/delete/${nurseId}`);
+    deleteSecretary: function (secretaryId) {
+        return axiosInstance.delete(`/secretaries/delete/${secretaryId}`);
     },
 
-    exportNurses: function (search) {
-        return axiosInstance.post('/nurses/export', null, {
+    exportSecretaries: function (search) {
+        return axiosInstance.post('/secretaries/export', null, {
             params: { search },
         });
 
