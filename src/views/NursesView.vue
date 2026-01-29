@@ -40,7 +40,7 @@
                             <v-img v-if="item.photoUrl" :src="item.photoUrl"
                                 :alt="`${item.firstName} ${item.lastName}`"></v-img>
                             <span v-else class="text-h6 white--text">{{ getInitials(item.firstName, item.lastName)
-                            }}</span>
+                                }}</span>
                         </v-avatar>
                     </template>
 
@@ -138,7 +138,6 @@ watch(search, () => {
 
 // When a new nurse is added, reload the items
 const onNurseAdded = () => {
-    console.log("onNurseAdded");
     showSnackbar('Nurse added successfully!');
     loadItems({
         page: 1,
@@ -149,7 +148,6 @@ const onNurseAdded = () => {
 
 // When a nurse is deleted, reload the items
 const onNurseDeleted = () => {
-    console.log("onNurseDeleted");
     showSnackbar('Nurse deleted successfully!');
     loadItems({
         page: 1,
@@ -160,7 +158,6 @@ const onNurseDeleted = () => {
 
 // When a nurse is updated, reload the items
 const onNurseUpdated = () => {
-    console.log("onNurseUpdated");
     showSnackbar('Nurse updated successfully!');
     loadItems({
         page: 1,
@@ -178,7 +175,6 @@ const exportNurses = async () => {
         showSnackbar('Error exporting nurses. Please try again.', 'error');
     }
 };
-
 
 </script>
 
