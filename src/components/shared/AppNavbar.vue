@@ -42,7 +42,7 @@
                                     :alt="`${userStore.userInfo.firstName} ${userStore.userInfo.lastName}`"></v-img>
                                 <span v-else class="text-h5 white--text">{{
                                     getInitials(userStore.userInfo.firstName, userStore.userInfo.lastName)
-                                }}</span>
+                                    }}</span>
                             </v-avatar>
                         </router-link>
                     </div>
@@ -72,7 +72,7 @@ const drawer = ref(false);
 const links = userLinks(userStore.userInfo.roleName);
 
 // images
-const images = require.context('../assets', true, /\.png$/);
+const images = require.context('../../assets', true, /\.png$/);
 const logoUrl = images('./logo.png');
 
 // Handle logout
