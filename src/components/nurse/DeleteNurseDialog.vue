@@ -2,12 +2,12 @@
     <v-icon size="large" color="red-lighten-1" @click="dialog = true">mdi-delete</v-icon>
     <v-dialog v-model="dialog" max-width="500">
         <v-card class="rounded-lg">
-            <v-card-title class="text-h5 bg-red-lighten-1 text-white pa-4">
+            <v-card-title class="text-h5 bg-error text-white pa-4">
                 Delete Nurse?
             </v-card-title>
             <v-card-text class="pt-6 pb-4 px-4">
                 <div class="d-flex">
-                    <v-avatar color="red-lighten-1" size="40" class="mr-4">
+                    <v-avatar color="error" size="40" class="mr-4">
                         <v-icon color="white" size="28">mdi-alert</v-icon>
                     </v-avatar>
                     <div>
@@ -22,10 +22,10 @@
             </v-card-text>
             <v-card-actions class="pa-4">
                 <v-spacer></v-spacer>
-                <v-btn color="grey-darken-1" variant="text" @click="closeDialog" class="mr-4" :ripple="false">
+                <v-btn color="secondary" variant="outlined" @click="closeDialog" class="mr-4" :ripple="false">
                     Cancel
                 </v-btn>
-                <v-btn color="error-darken-1" variant="flat" @click="confirmDelete" :ripple="false" :loading="isLoading"
+                <v-btn color="error" variant="contained" @click="confirmDelete" :ripple="false" :loading="isLoading"
                     :disabled="isLoading">
                     Delete
                 </v-btn>

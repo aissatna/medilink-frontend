@@ -1,6 +1,6 @@
 <template>
     <!-- Snackbar for notifications -->
-    <AppSnackbar v-model:show="snackbar.show" :text="snackbar.text" :color="snackbar.color" location="top" />
+    <AppSnackbar v-model:show="snackbar.show" :text="snackbar.text" :type="snackbar.type" />
     <v-container fluid class="pa-6">
         <v-card class="elevation-2 rounded-lg">
             <v-card-title class="py-4 px-6 bg-primary text-white">
@@ -30,7 +30,7 @@
                             variant="outlined" density="comfortable" hide-details clearable></v-text-field>
                     </v-col>
                 </v-row>
-                <v-data-table-server v-model:items-per-page="itemsPerPage" :headers="headers" :items="nurseItems"
+                <v-data-table-server v-model:items-per-page="itemsPerPage" :headers="headers" :items="secretaryItems"
                     :items-length="totalItems" :loading="loading" @update:options="loadItems" :search="search"
                     item-value="id" hover :items-per-page-options="pageSizes"
                     class="mt-4 elevation-1 rounded-lg text-body-1">
@@ -78,7 +78,7 @@ const DEFAULT_SORT_ORDER = 'asc';
 
 // State management
 const search = ref('');
-const nurseItems = ref([]);
+const secretaryItems = ref([]);
 const loading = ref(true);
 const totalItems = ref(0);
 const itemsPerPage = ref(5);
@@ -87,7 +87,7 @@ const itemsPerPage = ref(5);
 const snackbar = reactive({
     show: false,
     text: '',
-    color: 'success',
+    type: 'success',
 });
 
 // Table headers
@@ -101,9 +101,9 @@ const headers = [
     { title: 'Actions', key: 'actions', sortable: false },
 ];
 
-const showSnackbar = (text, color = 'success') => {
+const showSnackbar = (text, type = 'success') => {
     snackbar.text = text;
-    snackbar.color = color;
+    snackbar.type = type;
     snackbar.show = true;
 };
 
@@ -119,7 +119,7 @@ async function loadItems({ page, itemsPerPage, sortBy }) {
     try {
         // Fetch data from the API
         const response = await SecretaryService.getSecretaries(page - 1, itemsPerPage, sortParams, search.value);
-        nurseItems.value = response.data.content;
+        secretaryItems.value = response.data.content;
         totalItems.value = response.data.totalItems;
 
     } catch (error) {

@@ -1,6 +1,6 @@
 <template>
     <!-- Snackbar for notifications -->
-    <AppSnackbar v-model:show="snackbar.show" :text="snackbar.text" :color="snackbar.color" location="top" />
+    <AppSnackbar v-model:show="snackbar.show" :text="snackbar.text" :type="snackbar.type" />
     <v-container fluid class="pa-6">
         <v-card class="elevation-2 rounded-lg">
             <v-card-title class="py-4 px-6 bg-primary text-white">
@@ -85,7 +85,7 @@ const itemsPerPage = ref(5);
 const snackbar = reactive({
     show: false,
     text: '',
-    color: 'success',
+    type: 'success',
 });
 
 // Table headers
@@ -99,9 +99,9 @@ const headers = [
     { title: 'Actions', key: 'actions', sortable: false },
 ];
 
-const showSnackbar = (text, color = 'success') => {
+const showSnackbar = (text, type = 'success') => {
     snackbar.text = text;
-    snackbar.color = color;
+    snackbar.type = type;
     snackbar.show = true;
 };
 

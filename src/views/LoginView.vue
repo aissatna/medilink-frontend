@@ -59,7 +59,7 @@
 
 <script setup>
 import { ref, reactive } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { validationRules } from '@/utils/validationRules';
 import AuthService from '@/api/services/AuthService';
 import { useUserStore } from '@/stores/userStore';
@@ -74,6 +74,7 @@ const userStore = useUserStore();
 const authStore = useAuthStore();
 
 const router = useRouter();
+const route = useRoute();
 const loginForm = ref(null);
 const forgotPasswordForm = ref(null);
 const showPassword = ref(false);
@@ -81,7 +82,7 @@ const loading = ref(false);
 const snackbar = reactive({
   show: false,
   text: '',
-  color: '',
+  type: 'default',
 });
 
 const userCredentials = reactive({
@@ -102,9 +103,9 @@ const togglePasswordVisibility = () => {
 const handleForgotPassword = () => {
   forgotPasswordDialog.show = true;
 };
-const showSnackbar = (text, color) => {
+const showSnackbar = (text, type = 'default') => {
   snackbar.text = text;
-  snackbar.color = color;
+  snackbar.type = type;
   snackbar.show = true;
 };
 
@@ -130,7 +131,9 @@ async function onLoginSuccess(accessToken) {
   authStore.setToken(accessToken);
   try {
     await userStore.getUserInfo();
-    await router.push('/home');
+    // Redirect to the originally requested route or default to /home
+    const redirectPath = route.query.redirect || '/home';
+    await router.push(redirectPath);
   } catch (error) {
     console.error('Error retrieving user information:', error);
   }

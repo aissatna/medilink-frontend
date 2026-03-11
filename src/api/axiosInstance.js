@@ -2,7 +2,8 @@ import axios from 'axios';
 import { useAuthStore } from '@/stores/authStore';
 
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8070/medilink',
+    //baseURL: 'http://localhost:8070/medilink',
+     baseURL: 'https://laughing-telegram-pg9vpxpgwvwcr5g-8070.app.github.dev/medilink',
 });
 
 axiosInstance.interceptors.request.use(
