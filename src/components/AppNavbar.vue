@@ -1,22 +1,22 @@
 <template>
     <nav>
-        <v-app-bar elevation="2" class="py-0 px-4" color="bgColor">
+        <v-app-bar elevation="2" class="py-0 px-4" color="surface" height="68">
             <v-app-bar-nav-icon @click.stop="drawer = !drawer" color="primary"></v-app-bar-nav-icon>
             <!-- cabinet info -->
-            <div class="d-flex align-center ml-4 text-black">
-                <v-icon icon="mdi-office-building" color="teal" class="mr-2"></v-icon>
+            <div class="d-flex align-center ml-4 text-primary-dark">
+                <v-icon icon="mdi-office-building" color="primary" class="mr-2"></v-icon>
                 <span class="text-subtitle-2 font-weight-medium mr-4">{{ userStore.userInfo.cabinetName }}</span>
                 <v-icon icon="mdi-map-marker" color="teal" class="mr-2"></v-icon>
                 <span class="text-subtitle-2">{{ userStore.userInfo.cabinetAddress }}</span>
             </div>
             <v-spacer></v-spacer>
-            <v-btn @click="handleSignOut" color="primary" variant="outlined" class="py-0 px-4 rounded-lg">
+            <v-btn @click="handleSignOut" color="primary" variant="elevated" class="button-cta">
                 <span class="mr-2">Logout</span>
                 <v-icon>mdi-exit-to-app</v-icon>
             </v-btn>
         </v-app-bar>
 
-        <v-navigation-drawer v-model="drawer" class="drawer" elevation="4">
+        <v-navigation-drawer v-model="drawer" class="drawer" elevation="4" color="surface" width="300">
             <v-list>
                 <v-list-item class="pa-3">
                     <div class="d-flex justify-center w-100">
@@ -25,9 +25,9 @@
                 </v-list-item>
                 <v-divider></v-divider>
                 <v-list-item v-for="(link, index) in links" :key="index" :to="link.route"
-                    :active="$route.path === link.route" color="primary" class="my-2">
+                    :class="[{ 'active-link': $route.path === link.route }, 'my-2']" color="primary" variant="text">
                     <template v-slot:prepend>
-                        <v-icon :icon="link.icon"></v-icon>
+                        <v-icon :icon="link.icon" class="mr-2"></v-icon>
                     </template>
                     <v-list-item-title>{{ link.title }}</v-list-item-title>
                 </v-list-item>
@@ -83,23 +83,41 @@ async function handleSignOut() {
 </script>
 
 <style scoped>
-/* rgb(var(--v-theme-background-color)) */
 .drawer {
-    background-color: #bbebd9;
-    color: black;
+    background-color: #F8FBFF;
+    color: #1E2A40;
 }
 
 .user-profile {
-    border-top: 1px solid rgb(var(--v-theme-bgColor));
+    border-top: 1px solid rgba(26, 77, 143, 0.15);
     padding: 16px;
+    margin-top: 8px;
 }
 
 .v-avatar {
-    border: 1px solid rgb(var(--v-theme-primary));
+    border: 2px solid #1A4D8F;
 }
 
 .v-avatar:hover {
     transform: scale(1.05);
     transition: transform 0.3s ease;
+}
+
+.button-cta {
+    border-radius: 10px;
+    font-weight: 700;
+    text-transform: none;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.active-link {
+    background-color: #E1EEFF;
+    color: #0E88D4 !important;
+    border-radius: 8px;
+}
+
+.v-list-item {
+    font-weight: 600;
+    border-radius: 8px;
 }
 </style>

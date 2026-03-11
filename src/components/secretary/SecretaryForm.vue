@@ -125,7 +125,6 @@ watch(() => props.secretary, (newValue) => {
 
 const previewAvatar = (fileOrFiles) => {
     const file = Array.isArray(fileOrFiles) ? fileOrFiles[0] : fileOrFiles;
-    console.log(file);
     if (file && file instanceof File) {
         avatarPreview.value = URL.createObjectURL(file);
     } else {
